@@ -2,6 +2,7 @@ package com.grhtest.controller;
 
 import com.grhtest.pojo.GrhJsonResult;
 import com.grhtest.pojo.User;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,4 +37,32 @@ public class UserController {
         user.setDesc("json对象");
         return GrhJsonResult.ok(user);
     }
+
+    @RequestMapping("center")
+    public String center() {
+        return "thymeleaf/center/center";
+    }
+
+    @RequestMapping("test")
+    public String test(ModelMap map) {
+
+        User us = new User();
+        us.setName("Grh");
+        us.setAge(19);
+        us.setPassword("1231231");
+        us.setBirthday(new Date());
+        us.setDesc("<font color='green'><b>hello</b></font>");
+
+        map.addAttribute("user", us);
+
+        User u1 = new User();
+        u1.setAge(22);
+        u1.setName("imooc");
+        u1.setPassword("12312313");
+        u1.setBirthday(new Date());
+        u1.setDesc("hello");
+
+        return "thymeleaf/test";
+    }
+
 }
