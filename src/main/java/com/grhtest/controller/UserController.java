@@ -19,11 +19,11 @@ public class UserController {
     @RequestMapping("/getHello")
     public User getHello() {
         User user = new User();
-        user.setName("imooc");
-        user.setPassword("imooc");
+        //user.setName("imooc");
+        //user.setPassword("imooc");
         user.setAge(25);
         user.setBirthday(new Date());
-        user.setDesc("how are you!");
+        //user.setDesc("how are you!");
         return  user;
     }
 
