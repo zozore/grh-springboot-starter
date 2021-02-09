@@ -2,10 +2,13 @@ package com.grhtest.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.grhtest.mapper.SysUserMapper;
+import com.grhtest.mapper.SysUserMapperCustomer;
 import com.grhtest.pojo.SysUser;
 import com.grhtest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -20,7 +23,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SysUserMapper userMapper;
 
+    @Autowired
+    private SysUserMapperCustomer userMapperCustomer;
+
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public int saveUser(SysUser user) throws Exception {
         /**
          * insert 插入时将所有的字段都添加一遍，相当于全字段插入；
@@ -33,6 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public int updateUser(SysUser user) {
         /**
          * updateByPrimaryKey 执行更新的时候，使用全字段更新，没有赋值的字段默认为null；
@@ -44,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public int deletUser(SysUser user) {
         /**
          * delete 删除数据时，如果传入的参数为null，则会删除整张表的数据
@@ -55,13 +64,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public SysUser queryUserById(String userId) {
         return userMapper.selectByPrimaryKey(userId);
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<SysUser> queryUsers(SysUser user) {
-        List<SysUser> userList = userMapper.selectAll();
+        //List<SysUser> userList = userMapper.selectAll();
+        Example example = new Example(SysUser.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        if (!StringUtils.isEmptyOrWhitespace(user.getUserName())) {
+            criteria.andLike("userName", "%" + user.getUserName() + "%");
+        }
+        List<SysUser> userList = userMapper.selectByExample(example);
         return userList;
     }
 
@@ -73,6 +91,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<SysUser> queryUserListPaged(SysUser user, Integer page, Integer pageSize) {
         // 开始分页
         PageHelper.startPage(page, pageSize);
@@ -90,13 +109,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
     public SysUser queryUserByIdCustom(String userId) {
+        List<SysUser> userList = userMapperCustomer.queryUserById(userId);
+        if (null != userList && !userList.isEmpty()) {
+            return userList.get(0);
+        }
         return null;
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public int saveUserTransactional(SysUser user) {
-        return 0;
+        userMapper.insert(user);
+        int i = 1 / 0;
+        user.setWeight(100);
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 
 }

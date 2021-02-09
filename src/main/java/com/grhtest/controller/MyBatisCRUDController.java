@@ -77,4 +77,14 @@ public class MyBatisCRUDController {
 
         return GrhJsonResult.ok(userList);
     }
+
+    @RequestMapping("queryUser")
+    public SysUser queryUser(String userId) {
+        return userService.queryUserByIdCustom(userId);
+    }
+
+    @RequestMapping("transactional")
+    public GrhJsonResult saveUserTransactional(SysUser user) {
+        return GrhJsonResult.ok(userService.saveUserTransactional(user));
+    }
 }
