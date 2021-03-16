@@ -3,6 +3,7 @@ package com.grhtest;
 import ch.qos.logback.core.net.SyslogOutputStream;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -32,7 +33,15 @@ public class Test {
     }
     public static void main(String[] args) throws UnsupportedEncodingException {
         //System.out.println(Test.myAtoi("  -42"));
-        String filename = java.net.URLEncoder.encode("compareReport.docx","utf-8");
-        System.out.println(filename);
+        /*String filename = java.net.URLEncoder.encode("compareReport.docx","utf-8");
+        System.out.println(filename);*/
+
+        try {
+            Date old = new Date();
+            Thread.sleep(1000);
+            System.out.println(old.compareTo(new Date()));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
